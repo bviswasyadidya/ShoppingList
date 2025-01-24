@@ -1,6 +1,7 @@
 package com.viswas.shoppinglist
 
 import android.app.AlertDialog
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 data class ShoppingItem(val id:Int, var name: String, var quan: Int, var isEditing: Boolean =false){
@@ -46,6 +48,8 @@ fun ShoppingListApp(){
     var showDialog by remember { mutableStateOf(false) }
     var itemName by remember { mutableStateOf("") }
     var itemQuantity by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -75,6 +79,7 @@ fun ShoppingListApp(){
                         sItems = sItems.map{it.copy(isEditing = it.id == item.id)}
                     }, onDeleteClick = {
                         sItems = sItems - item
+                        Toast.makeText(context,"Item Removed!",Toast.LENGTH_SHORT).show()
                     })
                 }
             }
@@ -139,6 +144,7 @@ fun ShoppingItemEdit(item: ShoppingItem, onEditComplete:(String,Int)->Unit){
     var editedName by remember { mutableStateOf(item.name) }
     var editQuantity by remember { mutableStateOf((item.quan.toString())) }
     var isEditing by remember { mutableStateOf(item.isEditing) }
+    val context = LocalContext.current
 
     Row(modifier = Modifier
         .fillMaxWidth()
@@ -164,8 +170,9 @@ fun ShoppingItemEdit(item: ShoppingItem, onEditComplete:(String,Int)->Unit){
         }
 
         Button(onClick = {
-            isEditing = false;
+            isEditing = false
             onEditComplete(editedName,editQuantity.toIntOrNull()?:1)
+            Toast.makeText(context,"Item Modified!",Toast.LENGTH_SHORT).show()
         }){
             Text(text = "Save")
         }
